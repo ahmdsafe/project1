@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <title>
+            SVG Resposive Chart
+        </title>
+        <script src="http://d3js.org/d3.v4.min.js"></script>
+        <style>
+            rect {
+                fill: darkred;
+            }
+
+            rect:hover {
+                fill: darksalmon;
+            }
+
+            .chart text {
+                fill: whitesmoke;
+                font: 10px sans-serif;
+                text-anchor: end;
+            }
+
+            #TXT {
+                fill:black;
+            }
+          
+        </style>
+    </head>
+    <body>
+        <h3>chart representing </h3>
+        <h5>Population of egyptian governorates in millions</h5>
+        <svg class="chart" height="250" width="1500"></svg>
+        <p>Add Governorate</p>
+        <input id="input1" placeholder="Governorate" type="text"></input>
+        <input id="input2" placeholder="population (mill)" type="number"></input>
+        <button onclick="insert();">insert</button>
+
+        <script>
+            
+            function insert () {
+                var value1 = document.getElementById('input1').value;
+                keys.push(value1);
+                var value2 = document.getElementById('input2').value *10;
+                numbers.push(value2);
+                d3.selectAll("line").remove();
+                d3.selectAll("#TXT").remove();                
+                drawChart();
+                document.getElementById('input1').value = '';
+                document.getElementById('input2').value = '';
+            }
+            
+            function drawChart() {
+                var svg = d3.select("svg");
+                var line = d3.select("line");
+                var leng = numbers.length
+                var selection = svg.selectAll("g")
+                .data(numbers)
+                .enter().append("g")
+                .attr("transform", (d,i) => {
+                    return "translate(" + 60*i + "," + (150-d) + ")";
+                });
+                
+                selection.append("rect")
+                .attr("width", 55)
+                .attr("height", (d) => {return d;});
+                
+                selection.append("text")
+                .attr("x", 50)
+                .attr("y", 10)
+                .text( (d) => {return d/10 +" m";});
+                
+                selection.append("text")
+                .attr("x", 50)
+                .attr("y", (d) => {return (d-10);})
+                .data(keys)
+                .text( (x) => {return x;});
+                
+                svg.append("line")
+                .attr("x1", 0)
+                .attr("y1", 155)
+                .attr("x2", (leng * 60)+5)
+                .attr("y2", 155)
+                .attr("stroke", "black");
+                
+                svg.append("line")
+                .attr("x1", (leng * 60)+5)
+                .attr("y1", 0)
+                .attr("x2", (leng * 60)+5)
+                .attr("y2", 155)
+                .attr("stroke", "black");
+                
+                svg.append("text")
+                .attr("x", (leng * 60)+30)
+                .attr("y", 10)
+                .attr("id","TXT")
+                .text("1.5 m");
+                
+                svg.append("text")
+                .attr("x", (leng * 60)+30)
+                .attr("y", 155 )
+                .attr("id","TXT")
+                .text("0 m");
+            }
+            
+            var numbers = [68, 75, 91, 99];
+            var keys = ['Daqahlia', 'Sharqia', 'Giza', 'Cairo']
+            drawChart();
+        </script>
+    </body>
+    </html>
